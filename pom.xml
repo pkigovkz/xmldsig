@@ -57,6 +57,7 @@
 				<configuration>
 					<doCheck>false</doCheck>
 					<doUpdate>true</doUpdate>
+					<timestampFormat>{0,date,dd.MM.yyyy HH:mm:ss}</timestampFormat>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -71,8 +72,9 @@
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
 						<manifestEntries>
-							<Permissions>all-permissions</Permissions>
 							<SCM-Revision>${buildNumber}</SCM-Revision>
+							<Build-Time>${timestamp}</Build-Time>
+							<Permissions>all-permissions</Permissions>
 							<Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost
 								file:/*/knca_applet_example_is *.local</Codebase>
 							<Caller-Allowable-Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz

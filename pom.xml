@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>kz.gov.pki.kalkan</groupId>
+	<artifactId>xmldsig</artifactId>
+	<version>0.1</version>
+	<packaging>jar</packaging>
+	<name>PKI.GOV.KZ configuration for Apache XML-Security</name>
+	<url>http://pki.gov.kz</url>
+
+	<scm>
+		<connection>scm:git:http://aslan:fuckinggit@devgit:8888/jcrypt/knca_xmldsig.git</connection>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>kz.gov.pki.kalkan</groupId>
+			<artifactId>knca_provider_jce_kalkan</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+			<version>1.4.4</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.3</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>true</doUpdate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+						<manifestEntries>
+							<Permissions>all-permissions</Permissions>
+							<SCM-Revision>${buildNumber}</SCM-Revision>
+							<Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost
+								file:/*/knca_applet_example_is *.local</Codebase>
+							<Caller-Allowable-Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz
+								localhost file:/*/knca_applet_example_is *.local</Caller-Allowable-Codebase>
+							<Application-Library-Allowable-Codebase>*.kz *.egov.kz *.gov.kz
+								*.nitec.kz localhost file:/*/knca_applet_example_is *.local</Application-Library-Allowable-Codebase>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>signing</id>
+						<goals>
+							<goal>sign</goal>
+							<goal>verify</goal>
+						</goals>
+						<phase>package</phase>
+						<inherited>true</inherited>
+						<configuration>
+							<archiveDirectory>target</archiveDirectory>
+							<keystore>key/cs_knca.jks</keystore>
+							<alias>cs_knca</alias>
+							<storepass>12345678</storepass>
+							<verbose>false</verbose>
+							<certs>true</certs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

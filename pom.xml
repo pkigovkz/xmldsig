@@ -8,6 +8,9 @@
 	<packaging>jar</packaging>
 	<name>PKI.GOV.KZ configuration for Apache XML-Security</name>
 	<url>http://pki.gov.kz</url>
+	<organization>
+		<name>Kazakhstan National Certification Authority</name>
+	</organization>
 
 	<scm>
 		<connection>scm:git:http://aslan:fuckinggit@devgit:8888/jcrypt/knca_xmldsig.git</connection>
@@ -111,5 +114,16 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<url>http://devgit:8081/nexus/content/repositories/iok_releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<url>http://devgit:8081/nexus/content/repositories/iok_snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>

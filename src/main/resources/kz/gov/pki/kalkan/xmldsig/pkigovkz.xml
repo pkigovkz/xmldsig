@@ -183,7 +183,7 @@
                 DESCRIPTION="Can extract RSA public keys" />
       <Resolver JAVACLASS="org.apache.xml.security.keys.keyresolver.implementations.DSAKeyValueResolver"
                 DESCRIPTION="Can extract DSA public keys" />
-      <Resolver JAVACLASS="org.apache.xml.security.keys.keyresolver.implementations.X509CertificateResolver"
+      <Resolver JAVACLASS="kz.gov.pki.kalkan.xmldsig.keys.keyresolver.implementations.X509CertificateResolver"
                 DESCRIPTION="Can extract public keys from X509 certificates" />
       <Resolver JAVACLASS="org.apache.xml.security.keys.keyresolver.implementations.X509SKIResolver"
                 DESCRIPTION="Uses an X509v3 SubjectKeyIdentifier extension to retrieve a certificate from the storages" />

@@ -95,30 +95,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Version>${git.tag}</Implementation-Version>
-							<SCM-Revision>${git.revision}</SCM-Revision>
-							<SCM-Commit-Date>${git.commitDate}</SCM-Commit-Date>
-							<Build-Time>${timestamp}</Build-Time>
-							<Permissions>all-permissions</Permissions>
-							<Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Codebase>
-							<Caller-Allowable-Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Caller-Allowable-Codebase>
-							<Application-Library-Allowable-Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Application-Library-Allowable-Codebase>
-						</manifestEntries>
-					</archive>
-					<jarName>kalkancrypt_xmldsig-${git.tag}</jarName>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jarsigner-plugin</artifactId>
 				<version>1.4</version>
 				<executions>
@@ -143,7 +119,111 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<archive>
+								<addMavenDescriptor>false</addMavenDescriptor>
+								<manifest>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								</manifest>
+								<manifestEntries>
+									<Implementation-Version>${git.tag}</Implementation-Version>
+									<SCM-Revision>${git.revision}</SCM-Revision>
+									<SCM-Commit-Date>${git.commitDate}</SCM-Commit-Date>
+									<Build-Time>${timestamp}</Build-Time>
+									<Permissions>all-permissions</Permissions>
+									<Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Codebase>
+									<Caller-Allowable-Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Caller-Allowable-Codebase>
+									<Application-Library-Allowable-Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Application-Library-Allowable-Codebase>
+								</manifestEntries>
+							</archive>
+							<jarName>kalkancrypt_xmldsig-${git.tag}</jarName>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>osgi</id>
+			<dependencies>
+				<dependency>
+					<groupId>kz.gov.pki.kalkan</groupId>
+					<artifactId>knca_provider_jce_kalkan</artifactId>
+					<version>0.0.1-SNAPSHOT</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0.0</version>
+                        <executions>
+                            <execution>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>./config/osgi.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+					<plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.5.5</version>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+                            <finalName>kalkancrypt_xmldsig-${git.tag}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <archive>
+                                <addMavenDescriptor>false</addMavenDescriptor>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                                <addMavenDescriptor>false</addMavenDescriptor>
+                                <manifestEntries>
+                                    <Implementation-Version>${git.tag}</Implementation-Version>
+                                    <SCM-Revision>${git.revision}</SCM-Revision>
+                                    <Bundle-KNCA-Priority>${Bundle-KNCA-Priority}</Bundle-KNCA-Priority>
+                                    <Bundle-Name>${Bundle-Name}</Bundle-Name>
+                                    <Bundle-SymbolicName>${Bundle-SymbolicName}</Bundle-SymbolicName>
+                                    <Bundle-Version>${Bundle-Version}</Bundle-Version>
+                                    <Import-Package>${Import-Package}</Import-Package>
+                                    <Export-Package>${Export-Package}</Export-Package>
+                                </manifestEntries>
+                            </archive>
+						</configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<distributionManagement>
 		<repository>
 			<id>nexus</id>

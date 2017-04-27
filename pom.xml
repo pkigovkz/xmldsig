@@ -191,21 +191,20 @@
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
-                            <finalName>kalkancrypt_xmldsig-${git.tag}</finalName>
+                            <finalName>kalkancrypt_xmldsig-osgi-${git.tag}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <addMavenDescriptor>false</addMavenDescriptor>
                                 <manifest>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                    <addDefaultImplementationEntries>false</addDefaultImplementationEntries>
                                 </manifest>
-                                <addMavenDescriptor>false</addMavenDescriptor>
                                 <manifestEntries>
                                     <Implementation-Version>${git.tag}</Implementation-Version>
                                     <SCM-Revision>${git.revision}</SCM-Revision>
                                     <Bundle-KNCA-Priority>${Bundle-KNCA-Priority}</Bundle-KNCA-Priority>
                                     <Bundle-Name>${Bundle-Name}</Bundle-Name>
                                     <Bundle-SymbolicName>${Bundle-SymbolicName}</Bundle-SymbolicName>
-                                    <Bundle-Version>${Bundle-Version}</Bundle-Version>
+                                    <Bundle-Version>${git.tag}</Bundle-Version>
                                     <Import-Package>${Import-Package}</Import-Package>
                                     <Export-Package>${Export-Package}</Export-Package>
                                 </manifestEntries>
@@ -213,7 +212,7 @@
 						</configuration>
                         <executions>
                             <execution>
-                                <phase>package</phase>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>

@@ -25,6 +25,7 @@
 			<groupId>kz.gov.pki.kalkan</groupId>
 			<artifactId>knca_provider_jce_kalkan</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+                        <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.santuario</groupId>

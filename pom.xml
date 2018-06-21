@@ -4,7 +4,7 @@
 
 	<groupId>kz.gov.pki.kalkan</groupId>
 	<artifactId>xmldsig</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.3</version>
 	<packaging>jar</packaging>
 	<name>PKI.GOV.KZ configuration for Apache XML-Security</name>
 	<url>http://pki.gov.kz</url>
@@ -13,7 +13,7 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:http://aslan:fuckinggit@devgit:8888/jcrypt/knca_xmldsig.git</connection>
+		<connection>scm:git:http://gogit:3000/jcrypt/knca_xmldsig.git</connection>
 	</scm>
 
 	<properties>
@@ -24,8 +24,8 @@
 		<dependency>
 			<groupId>kz.gov.pki.kalkan</groupId>
 			<artifactId>knca_provider_jce_kalkan</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-                        <scope>provided</scope>
+			<version>0.4.1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.santuario</groupId>
@@ -109,10 +109,10 @@
 						<inherited>true</inherited>
 						<configuration>
 							<archiveDirectory>target</archiveDirectory>
-							<keystore>key/cs_knca.jks</keystore>
-							<alias>cs_knca</alias>
-							<storepass>12345678</storepass>
-							<verbose>false</verbose>
+							<keystore>${jarsigner.keystore}</keystore>
+							<alias>${jarsigner.alias}</alias>
+							<storepass>${jarsigner.storepass}</storepass>
+							<verbose>${jarsigner.verbose}</verbose>
 							<certs>true</certs>
 						</configuration>
 					</execution>
@@ -139,17 +139,13 @@
 									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 								</manifest>
 								<manifestEntries>
-									<Implementation-Version>${git.tag}</Implementation-Version>
+									<Implementation-Version>${project.version}</Implementation-Version>
 									<SCM-Revision>${git.revision}</SCM-Revision>
 									<SCM-Commit-Date>${git.commitDate}</SCM-Commit-Date>
 									<Build-Time>${timestamp}</Build-Time>
-									<Permissions>all-permissions</Permissions>
-									<Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Codebase>
-									<Caller-Allowable-Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Caller-Allowable-Codebase>
-									<Application-Library-Allowable-Codebase>*.kz *.egov.kz *.gov.kz *.nitec.kz localhost file:/*/knca_applet_example_is *.local</Application-Library-Allowable-Codebase>
 								</manifestEntries>
 							</archive>
-							<jarName>kalkancrypt_xmldsig-${git.tag}</jarName>
+							<jarName>kalkancrypt_xmldsig-${project.version}</jarName>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -161,7 +157,7 @@
 				<dependency>
 					<groupId>kz.gov.pki.kalkan</groupId>
 					<artifactId>knca_provider_jce_kalkan</artifactId>
-					<version>0.0.1-SNAPSHOT</version>
+					<version>0.4.1</version>
 					<scope>provided</scope>
 				</dependency>
 			</dependencies>
@@ -192,7 +188,7 @@
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
-                            <finalName>kalkancrypt_xmldsig-osgi-${git.tag}</finalName>
+                            <finalName>kalkancrypt_xmldsig-osgi-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <addMavenDescriptor>false</addMavenDescriptor>
@@ -200,12 +196,11 @@
                                     <addDefaultImplementationEntries>false</addDefaultImplementationEntries>
                                 </manifest>
                                 <manifestEntries>
-                                    <Implementation-Version>${git.tag}</Implementation-Version>
+                                    <Implementation-Version>${project.version}</Implementation-Version>
                                     <SCM-Revision>${git.revision}</SCM-Revision>
-                                    <Bundle-KNCA-Priority>${Bundle-KNCA-Priority}</Bundle-KNCA-Priority>
                                     <Bundle-Name>${Bundle-Name}</Bundle-Name>
                                     <Bundle-SymbolicName>${Bundle-SymbolicName}</Bundle-SymbolicName>
-                                    <Bundle-Version>${git.tag}</Bundle-Version>
+                                    <Bundle-Version>${project.version}</Bundle-Version>
                                     <Import-Package>${Import-Package}</Import-Package>
                                     <Export-Package>${Export-Package}</Export-Package>
                                 </manifestEntries>
@@ -226,13 +221,14 @@
 	</profiles>
 	<distributionManagement>
 		<repository>
-			<id>nexus</id>
-			<url>http://devgit:8081/nexus/content/repositories/iok_releases/</url>
+			<id>central</id>
+			<name>pki-releases</name>
+			<url>http://pkirepo:8081/artifactory/libs-release-local</url>
 		</repository>
 		<snapshotRepository>
-			<id>nexus</id>
-			<url>http://devgit:8081/nexus/content/repositories/iok_snapshots/</url>
+			<id>snapshots</id>
+			<name>pki-snapshots</name>
+			<url>http://pkirepo:8081/artifactory/libs-snapshot-local</url>
 		</snapshotRepository>
 	</distributionManagement>
-
 </project>

@@ -4,7 +4,7 @@
 
 	<groupId>kz.gov.pki.kalkan</groupId>
 	<artifactId>xmldsig</artifactId>
-	<version>0.3</version>
+	<version>0.3.1</version>
 	<packaging>jar</packaging>
 	<name>PKI.GOV.KZ configuration for Apache XML-Security</name>
 	<url>http://pki.gov.kz</url>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>kz.gov.pki.kalkan</groupId>
 			<artifactId>knca_provider_jce_kalkan</artifactId>
-			<version>0.4.1</version>
+			<version>0.6.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
+			<version>1.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -113,6 +113,7 @@
 							<alias>${jarsigner.alias}</alias>
 							<storepass>${jarsigner.storepass}</storepass>
 							<verbose>${jarsigner.verbose}</verbose>
+							<tsa>http://tsp.pki.gov.kz</tsa>
 							<certs>true</certs>
 						</configuration>
 					</execution>

@@ -67,6 +67,8 @@
                           JAVACLASS="org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA1" />
       <SignatureAlgorithm URI="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
                           JAVACLASS="org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA256" />
+      <SignatureAlgorithm URI="urn:ietf:params:xml:ns:pkigovkz:xmlsec:algorithms:gostr34102015-gostr34112015-512"
+                          JAVACLASS="kz.gov.pki.kalkan.xmldsig.SignatureGostR3410_2015$GostR34102015GostR34112015_512" />
    </SignatureAlgorithms>
    <JCEAlgorithmMappings>
       <Providers>
@@ -77,6 +79,13 @@
 	  </Providers>
       <Algorithms>
          <!-- MessageDigest Algorithms -->
+         <Algorithm URI="urn:ietf:params:xml:ns:pkigovkz:xmlsec:algorithms:gostr34112015-512"
+                    Description="GOST R 34.11-2015-512 message digest"
+                    AlgorithmClass="MessageDigest"
+                    RequirementLevel="REQUIRED"
+                    SpecificationURL="http://www.ietf.org/internet-drafts/draft-eastlake-xmldsig-uri-02.txt"
+                    JCEName="GOST3411-2015-512"/>
+
          <Algorithm URI="http://www.w3.org/2001/04/xmldsig-more#gost34311"
                     Description="GOST 34.311 message digest"
                     AlgorithmClass="MessageDigest"
@@ -103,6 +112,12 @@
                     JCEName="SHA-256"/>
 
          <!-- Signature Algorithms -->
+         <Algorithm URI="urn:ietf:params:xml:ns:pkigovkz:xmlsec:algorithms:gostr34102015-gostr34112015-512"
+                    Description="ECGOST3410-2015 with GOST3411-2015-512 message digest"
+                    AlgorithmClass="Signature"
+                    RequirementLevel="REQUIRED"
+                    JCEName="ECGOST3410-2015-512"/>
+
          <Algorithm URI="http://www.w3.org/2001/04/xmldsig-more#gost34310-gost34311"
                     Description="ECGOST34310 with GOST34311 message digest"
                     AlgorithmClass="Signature"

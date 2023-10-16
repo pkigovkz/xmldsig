@@ -1,36 +1,42 @@
 package kz.gov.pki.kalkan.xmldsig.keys.keyresolver.implementations;
 
-import org.apache.xml.security.keys.keyresolver.KeyResolverSpi;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
+
 import org.apache.xml.security.exceptions.XMLSecurityException;
+import org.apache.xml.security.keys.content.x509.XMLX509Certificate;
 import org.apache.xml.security.keys.keyresolver.KeyResolverException;
+import org.apache.xml.security.keys.keyresolver.KeyResolverSpi;
 import org.apache.xml.security.keys.storage.StorageResolver;
 import org.apache.xml.security.utils.Constants;
 import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Element;
-import kz.gov.pki.kalkan.xmldsig.keys.content.x509.XMLX509Certificate;
 
+/**
+ * Resolves Certificates which are directly contained inside a
+ * <CODE>ds:X509Certificate</CODE> Element.
+ *
+ */
 public class X509CertificateResolver extends KeyResolverSpi {
-	/** {@link org.apache.commons.logging} logging facility */
-    private static org.apache.commons.logging.Log log = 
-        org.apache.commons.logging.LogFactory.getLog(X509CertificateResolver.class);
 
-    /**
-     * Method engineResolvePublicKey
-     * @inheritDoc
-     * @param element
-     * @param BaseURI
-     * @param storage
-     *
-     * @throws KeyResolverException
-     */
-    public PublicKey engineLookupAndResolvePublicKey(
-        Element element, String BaseURI, StorageResolver storage
+    private static final org.slf4j.Logger LOG =
+        org.slf4j.LoggerFactory.getLogger(X509CertificateResolver.class);
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean engineCanResolve(Element element, String baseURI, StorageResolver storage) {
+        return Constants.SignatureSpecNS.equals(element.getNamespaceURI());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected PublicKey engineResolvePublicKey(
+        Element element, String baseURI, StorageResolver storage, boolean secureValidation
     ) throws KeyResolverException {
 
-        X509Certificate cert = 
-            this.engineLookupResolveX509Certificate(element, BaseURI, storage);
+        X509Certificate cert =
+            this.engineResolveX509Certificate(element, baseURI, storage, secureValidation);
 
         if (cert != null) {
             return cert.getPublicKey();
@@ -39,34 +45,27 @@ public class X509CertificateResolver extends KeyResolverSpi {
         return null;
     }
 
-    /**
-     * Method engineResolveX509Certificate
-     * @inheritDoc
-     * @param element
-     * @param BaseURI
-     * @param storage
-     *
-     * @throws KeyResolverException
-     */
-    public X509Certificate engineLookupResolveX509Certificate(
-        Element element, String BaseURI, StorageResolver storage
+    /** {@inheritDoc} */
+    @Override
+    protected X509Certificate engineResolveX509Certificate(
+        Element element, String baseURI, StorageResolver storage, boolean secureValidation
     ) throws KeyResolverException {
 
         try {
-            Element[] els = 
+            Element[] els =
                 XMLUtils.selectDsNodes(element.getFirstChild(), Constants._TAG_X509CERTIFICATE);
-            if ((els == null) || (els.length == 0)) {  
+            if (els == null || els.length == 0) {
                 Element el =
                     XMLUtils.selectDsNode(element.getFirstChild(), Constants._TAG_X509DATA, 0);
                 if (el != null) {
-                    return engineLookupResolveX509Certificate(el, BaseURI, storage);
-                }        	 
-                return null;            
+                    return engineResolveX509Certificate(el, baseURI, storage, secureValidation);
+                }
+                return null;
             }
 
             // populate Object array
-            for (int i = 0; i < els.length; i++) {
-                XMLX509Certificate xmlCert = new XMLX509Certificate(els[i], BaseURI);
+            for (Element el : els) {
+                XMLX509Certificate xmlCert = new XMLX509Certificate(el, baseURI);
                 X509Certificate cert = xmlCert.getX509Certificate();
                 if (cert != null) {
                     return cert;
@@ -74,22 +73,23 @@ public class X509CertificateResolver extends KeyResolverSpi {
             }
             return null;
         } catch (XMLSecurityException ex) {
-            if (log.isDebugEnabled()) {
-                log.debug("XMLSecurityException", ex);
-            }
-            throw new KeyResolverException("generic.EmptyMessage", ex);
+            LOG.debug("Security Exception", ex);
+            throw new KeyResolverException(ex);
         }
     }
 
-    /**
-     * Method engineResolveSecretKey
-     * @inheritDoc
-     * @param element
-     * @param BaseURI
-     * @param storage
-     */
-    public javax.crypto.SecretKey engineLookupAndResolveSecretKey(
-        Element element, String BaseURI, StorageResolver storage
+    /** {@inheritDoc} */
+    @Override
+    protected javax.crypto.SecretKey engineResolveSecretKey(
+        Element element, String baseURI, StorageResolver storage, boolean secureValidation
+    ) {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected PrivateKey engineResolvePrivateKey(
+        Element element, String baseURI, StorageResolver storage, boolean secureValidation
     ) {
         return null;
     }

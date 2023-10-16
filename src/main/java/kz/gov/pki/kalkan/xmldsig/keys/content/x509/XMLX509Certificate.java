@@ -1,35 +1,36 @@
 package kz.gov.pki.kalkan.xmldsig.keys.content.x509;
 
-import org.apache.xml.security.keys.content.x509.XMLX509DataContent;
-import org.apache.xml.security.utils.SignatureElementProxy;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+
 import org.apache.xml.security.exceptions.XMLSecurityException;
 import org.apache.xml.security.utils.Constants;
+import org.apache.xml.security.utils.SignatureElementProxy;
+import org.apache.xml.security.keys.content.x509.XMLX509DataContent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import kz.gov.pki.kalkan.jce.provider.KalkanProvider;
-
 public class XMLX509Certificate extends SignatureElementProxy implements XMLX509DataContent {
 
-	/** Field JCA_CERT_ID */
+    /** Field JCA_CERT_ID */
     public static final String JCA_CERT_ID = "X.509";
 
     /**
      * Constructor X509Certificate
      *
      * @param element
-     * @param BaseURI
+     * @param baseURI
      * @throws XMLSecurityException
      */
-    public XMLX509Certificate(Element element, String BaseURI) throws XMLSecurityException {
-        super(element, BaseURI);
+    public XMLX509Certificate(Element element, String baseURI) throws XMLSecurityException {
+        super(element, baseURI);
     }
 
     /**
@@ -58,7 +59,7 @@ public class XMLX509Certificate extends SignatureElementProxy implements XMLX509
         try {
             this.addBase64Text(x509certificate.getEncoded());
         } catch (java.security.cert.CertificateEncodingException ex) {
-            throw new XMLSecurityException("empty", ex);
+            throw new XMLSecurityException(ex);
         }
     }
 
@@ -79,27 +80,18 @@ public class XMLX509Certificate extends SignatureElementProxy implements XMLX509
      * @throws XMLSecurityException
      */
     public X509Certificate getX509Certificate() throws XMLSecurityException {
-        try {
-            byte certbytes[] = this.getCertificateBytes();
+        byte[] certbytes = this.getCertificateBytes();
+        try (InputStream is = new ByteArrayInputStream(certbytes)) {
             CertificateFactory certFact;
-			try {
-				certFact = CertificateFactory.getInstance(XMLX509Certificate.JCA_CERT_ID, KalkanProvider.PROVIDER_NAME);
-			} catch (NoSuchProviderException e) {
-	            log.error("There is no KALKAN Provider!", e);
-				certFact = CertificateFactory.getInstance(XMLX509Certificate.JCA_CERT_ID);
-			}
-            X509Certificate cert =
-                (X509Certificate) certFact.generateCertificate(
-                    new ByteArrayInputStream(certbytes)
-                );
-
-            if (cert != null) {
-                return cert;
+            try {
+                certFact = CertificateFactory.getInstance(XMLX509Certificate.JCA_CERT_ID, "KALKAN");
+            } catch (NoSuchProviderException e) {
+                LOG.error("KalkanCrypt not found!");
+                certFact = CertificateFactory.getInstance(XMLX509Certificate.JCA_CERT_ID);
             }
-
-            return null;
-        } catch (CertificateException ex) {
-            throw new XMLSecurityException("empty", ex);
+            return (X509Certificate) certFact.generateCertificate(is);
+        } catch (CertificateException | IOException ex) {
+            throw new XMLSecurityException(ex);
         }
     }
 
@@ -109,7 +101,7 @@ public class XMLX509Certificate extends SignatureElementProxy implements XMLX509
      * @return the publickey
      * @throws XMLSecurityException
      */
-    public PublicKey getPublicKey() throws XMLSecurityException {
+    public PublicKey getPublicKey() throws XMLSecurityException, IOException {
         X509Certificate cert = this.getX509Certificate();
 
         if (cert != null) {
@@ -119,7 +111,8 @@ public class XMLX509Certificate extends SignatureElementProxy implements XMLX509
         return null;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof XMLX509Certificate)) {
             return false;
@@ -132,22 +125,22 @@ public class XMLX509Certificate extends SignatureElementProxy implements XMLX509
         }
     }
 
+    @Override
     public int hashCode() {
         int result = 17;
         try {
             byte[] bytes = getCertificateBytes();
-            for (int i = 0; i < bytes.length; i++) {
-                result = 31 * result + bytes[i];
+            for (byte element : bytes) {
+                result = 31 * result + element;
             }
         } catch (XMLSecurityException e) {
-            if (log.isDebugEnabled()) {
-                log.debug(e);
-            }
+            LOG.debug(e.getMessage(), e);
         }
         return result;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public String getBaseLocalName() {
         return Constants._TAG_X509CERTIFICATE;
     }
